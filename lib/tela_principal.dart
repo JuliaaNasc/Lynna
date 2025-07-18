@@ -17,7 +17,6 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
 
   final TextEditingController _pesquisaController = TextEditingController();
   final CarrosselController _carrosselController = CarrosselController();
-  final OpcoesController _opcoesController = OpcoesController();
   int _indiceSelecionado = 0;
 
   @override
@@ -35,16 +34,17 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
     super.dispose();
   }
 
-  // Lista das páginas para o menu inferior
-  List<Widget> get _paginas => [
-        _buildConteudoPrincipal(),
-        Center(child: Text('Tela 2 - Futuro conteúdo')),
-        Center(child: Text('Tela 3 - Futuro conteúdo')),
+  // Lista das páginas para o menu inferior, recebe o controller para passar adiante
+  List<Widget> _paginas(OpcoesController opcoesController) => [
+        _buildConteudoPrincipal(opcoesController),
+        const Center(child: Text('Tela 2 - Futuro conteúdo')),
+        const Center(child: Text('Tela 3 - Futuro conteúdo')),
       ];
 
   @override
   Widget build(BuildContext context) {
     final temaController = Provider.of<TemaController>(context);
+    final opcoesController = Provider.of<OpcoesController>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -70,7 +70,7 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
           ),
         ],
       ),
-      body: _paginas[_paginaSelecionada],
+      body: _paginas(opcoesController)[_paginaSelecionada],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _paginaSelecionada,
         selectedItemColor: Colors.pink,
@@ -98,7 +98,7 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
     );
   }
 
-  Widget _buildConteudoPrincipal() {
+  Widget _buildConteudoPrincipal(OpcoesController opcoesController) {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -114,11 +114,11 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            _buildOpcoesHorizontais(),
+            _buildOpcoesHorizontais(opcoesController),
             const SizedBox(height: 12),
-            _buildQuantidadeInformacoes(),
+            _buildQuantidadeInformacoes(opcoesController),
             const SizedBox(height: 20),
-            _buildConteudoSelecionado(),
+            _buildConteudoSelecionado(opcoesController),
           ],
         ),
       ),
@@ -176,20 +176,21 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
     );
   }
 
-  Widget _buildOpcoesHorizontais() {
+  Widget _buildOpcoesHorizontais(OpcoesController opcoesController) {
     return SizedBox(
       height: 50,
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
-          children: List.generate(_opcoesController.opcoes.length, (index) {
-            final opcao = _opcoesController.opcoes[index];
+          children: List.generate(opcoesController.opcoes.length, (index) {
+            final opcao = opcoesController.opcoes[index];
             final selecionado = _indiceSelecionado == index;
 
             return GestureDetector(
               onTap: () {
                 setState(() {
                   _indiceSelecionado = index;
+                  opcoesController.selecionarOpcao(opcao);
                 });
               },
               child: Container(
@@ -225,10 +226,8 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
     );
   }
 
-  Widget _buildQuantidadeInformacoes() {
-    final quantidade = _opcoesController
-        .subopcoesSelecionadas
-        .length; // Subopções da opção selecionada
+  Widget _buildQuantidadeInformacoes(OpcoesController opcoesController) {
+    final quantidade = opcoesController.subopcoesSelecionadas.length;
     return Text(
       'Quantidade de informações: $quantidade',
       style: TextStyle(
@@ -241,10 +240,8 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
     );
   }
 
-  Widget _buildConteudoSelecionado() {
-    final opcaoPrincipal = _opcoesController.opcoes[_indiceSelecionado];
-    _opcoesController.selecionarOpcao(opcaoPrincipal);
-    final subopcoes = _opcoesController.subopcoesSelecionadas;
+  Widget _buildConteudoSelecionado(OpcoesController opcoesController) {
+    final subopcoes = opcoesController.subopcoesSelecionadas;
 
     return Column(
       children: subopcoes.map((sub) {
