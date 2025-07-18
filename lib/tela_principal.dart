@@ -12,9 +12,13 @@ class TelaPrincipalScreen extends StatefulWidget {
 }
 
 class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
+  // Controle do menu rodapé
+  int _paginaSelecionada = 0;
+
   final TextEditingController _pesquisaController = TextEditingController();
   final CarrosselController _carrosselController = CarrosselController();
   final OpcoesController _opcoesController = OpcoesController();
+  int _indiceSelecionado = 0;
 
   @override
   void initState() {
@@ -30,6 +34,13 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
     _carrosselController.dispose();
     super.dispose();
   }
+
+  // Lista das páginas para o menu inferior
+  List<Widget> get _paginas => [
+        _buildConteudoPrincipal(),
+        Center(child: Text('Tela 2 - Futuro conteúdo')),
+        Center(child: Text('Tela 3 - Futuro conteúdo')),
+      ];
 
   @override
   Widget build(BuildContext context) {
@@ -59,24 +70,56 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildCampoDePesquisa(),
-              const SizedBox(height: 16),
-              _buildCarrosselDeImagens(),
-              const SizedBox(height: 16),
-              const Text(
-                'Selecione a sua opção para explorar:',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              _buildOpcoesHorizontais(),
-            ],
+      body: _paginas[_paginaSelecionada],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _paginaSelecionada,
+        selectedItemColor: Colors.pink,
+        unselectedItemColor: Colors.grey,
+        onTap: (index) {
+          setState(() {
+            _paginaSelecionada = index;
+          });
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Início',
           ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: 'Opções',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Configurações',
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildConteudoPrincipal() {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildCampoDePesquisa(),
+            const SizedBox(height: 16),
+            _buildCarrosselDeImagens(),
+            const SizedBox(height: 16),
+            const Text(
+              'Selecione a sua opção para explorar:',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            _buildOpcoesHorizontais(),
+            const SizedBox(height: 12),
+            _buildQuantidadeInformacoes(),
+            const SizedBox(height: 20),
+            _buildConteudoSelecionado(),
+          ],
         ),
       ),
     );
@@ -135,31 +178,43 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
 
   Widget _buildOpcoesHorizontais() {
     return SizedBox(
-      height: 50, // Altura fixa do bloco das opções
+      height: 50,
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
           children: List.generate(_opcoesController.opcoes.length, (index) {
             final opcao = _opcoesController.opcoes[index];
-            return Container(
-              width: 120, // Largura fixa de cada item
-              margin: const EdgeInsets.only(right: 10),
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 255, 197, 216),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.pink),
-              ),
-              child: Center(
-                child: Text(
-                  opcao,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color:
-                        Theme.of(context).brightness == Brightness.dark
-                            ? Colors.pink
-                            : Colors.black,
+            final selecionado = _indiceSelecionado == index;
+
+            return GestureDetector(
+              onTap: () {
+                setState(() {
+                  _indiceSelecionado = index;
+                });
+              },
+              child: Container(
+                width: 120,
+                margin: const EdgeInsets.only(right: 10),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: selecionado
+                      ? Colors.pinkAccent
+                      : const Color.fromARGB(255, 255, 197, 216),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.pink),
+                ),
+                child: Center(
+                  child: Text(
+                    opcao,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: selecionado
+                          ? Colors.white
+                          : Theme.of(context).brightness == Brightness.dark
+                              ? Colors.pink
+                              : Colors.black,
+                    ),
                   ),
                 ),
               ),
@@ -167,6 +222,62 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
           }),
         ),
       ),
+    );
+  }
+
+  Widget _buildQuantidadeInformacoes() {
+    final quantidade = _opcoesController
+        .subopcoesSelecionadas
+        .length; // Subopções da opção selecionada
+    return Text(
+      'Quantidade de informações: $quantidade',
+      style: TextStyle(
+        fontWeight: FontWeight.w600,
+        fontSize: 14,
+        color: Theme.of(context).brightness == Brightness.dark
+            ? Colors.white
+            : Colors.black,
+      ),
+    );
+  }
+
+  Widget _buildConteudoSelecionado() {
+    final opcaoPrincipal = _opcoesController.opcoes[_indiceSelecionado];
+    _opcoesController.selecionarOpcao(opcaoPrincipal);
+    final subopcoes = _opcoesController.subopcoesSelecionadas;
+
+    return Column(
+      children: subopcoes.map((sub) {
+        return Container(
+          margin: const EdgeInsets.symmetric(vertical: 8),
+          child: Row(
+            children: [
+              const Icon(
+                Icons.person,
+                size: 40,
+                color: Colors.pink,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      sub['titulo'] ?? '',
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w600),
+                    ),
+                    Text(
+                      sub['descricao'] ?? '',
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
     );
   }
 }
