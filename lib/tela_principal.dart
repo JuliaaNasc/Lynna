@@ -290,7 +290,7 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
           child: Row(
             children: [
               const Icon(
-                Icons.person,
+                Icons.home_rounded,
                 size: 40,
                 color: Colors.pink,
               ),
