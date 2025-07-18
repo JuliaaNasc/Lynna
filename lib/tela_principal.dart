@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:lynna/controller/tema_controller.dart';
+import 'package:provider/provider.dart';
 
 class TelaPrincipalScreen extends StatefulWidget {
   const TelaPrincipalScreen({super.key});
@@ -9,26 +11,27 @@ class TelaPrincipalScreen extends StatefulWidget {
 }
 
 class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
-  final TextEditingController pesquisaController = TextEditingController();
-  final PageController _pageController = PageController();
-  int _paginaAtual = 0;
+  final TextEditingController _pesquisaController = TextEditingController();
+  final PageController _carrosselController = PageController();
 
-  final List<String> imagens = [
+  final List<String> _imagensCarrossel = [
     'assets/imagens/imagem_01.jpg',
     'assets/imagens/imagem_02.jpg',
     'assets/imagens/imagem_03.jpg',
   ];
 
+  int _paginaAtual = 0;
+
   @override
   void initState() {
     super.initState();
+
     Timer.periodic(const Duration(seconds: 3), (Timer timer) {
-      if (_paginaAtual < imagens.length - 1) {
-        _paginaAtual++;
-      } else {
-        _paginaAtual = 0;
-      }
-      _pageController.animateToPage(
+      setState(() {
+        _paginaAtual = (_paginaAtual + 1) % _imagensCarrossel.length;
+      });
+
+      _carrosselController.animateToPage(
         _paginaAtual,
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeInOut,
@@ -38,80 +41,100 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
 
   @override
   void dispose() {
-    _pageController.dispose();
-    pesquisaController.dispose();
+    _pesquisaController.dispose();
+    _carrosselController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final temaController = Provider.of<TemaController>(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          children: const [
+        title: const Row(
+          children: [
             Icon(Icons.location_on),
             SizedBox(width: 8),
-            Text('Seja Bem-Vindo a Lynna'),
+            Text(
+              'Bem-Vindo à Lynna',
+              style: TextStyle(color: Colors.pink, fontWeight: FontWeight.bold),
+            ),
           ],
         ),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Switch(
+                value: temaController.temaEscuro,
+                onChanged: (value) {
+                  temaController.alternarTema();
+                },
+              ),
+              const SizedBox(width: 12), // espaçamento extra
+            ],
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Campo de pesquisa
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: pesquisaController,
-                    decoration: const InputDecoration(
-                      hintText: 'Pesquisar...',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                ElevatedButton(
-                  onPressed: () {
-                    final textoDigitado = pesquisaController.text;
-                    print('Pesquisando por: $textoDigitado');
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.all(16),
-                  ),
-                  child: const Icon(Icons.search),
-                ),
-              ],
-            ),
+            _buildCampoDePesquisa(),
             const SizedBox(height: 16),
-
-            // Carrossel automático
-            SizedBox(
-              height: 180,
-              child: PageView.builder(
-                controller: _pageController,
-                itemCount: imagens.length,
-                itemBuilder: (context, index) {
-                  return _buildCarrosselItem(imagens[index]);
-                },
-              ),
-            ),
+            _buildCarrosselDeImagens(),
           ],
         ),
       ),
     );
   }
 
-  // Widget auxiliar para imagem do carrossel
-  Widget _buildCarrosselItem(String imagePath) {
+  Widget _buildCampoDePesquisa() {
+    return Row(
+      children: [
+        Expanded(
+          child: TextField(
+            controller: _pesquisaController,
+            decoration: const InputDecoration(
+              hintText: 'Pesquisar...',
+              border: OutlineInputBorder(),
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
+        ElevatedButton(
+          onPressed: () {
+            final texto = _pesquisaController.text;
+            print('Pesquisando por: $texto');
+          },
+          style: ElevatedButton.styleFrom(padding: const EdgeInsets.all(16)),
+          child: const Icon(Icons.search),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCarrosselDeImagens() {
+    return SizedBox(
+      height: 180,
+      child: PageView.builder(
+        controller: _carrosselController,
+        itemCount: _imagensCarrossel.length,
+        itemBuilder: (context, index) {
+          return _buildItemCarrossel(_imagensCarrossel[index]);
+        },
+      ),
+    );
+  }
+
+  Widget _buildItemCarrossel(String caminhoImagem) {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       clipBehavior: Clip.antiAlias,
       child: Image.asset(
-        imagePath,
+        caminhoImagem,
         fit: BoxFit.cover,
         width: double.infinity,
       ),
