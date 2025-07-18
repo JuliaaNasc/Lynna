@@ -1,6 +1,7 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:lynna/controller/tema_controller.dart';
+import 'package:lynna/controller/carrossel_controller.dart';
+import 'package:lynna/controller/opcoes_controller.dart';
 import 'package:provider/provider.dart';
 
 class TelaPrincipalScreen extends StatefulWidget {
@@ -12,30 +13,14 @@ class TelaPrincipalScreen extends StatefulWidget {
 
 class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
   final TextEditingController _pesquisaController = TextEditingController();
-  final PageController _carrosselController = PageController();
-
-  final List<String> _imagensCarrossel = [
-    'assets/imagens/imagem_01.jpg',
-    'assets/imagens/imagem_02.jpg',
-    'assets/imagens/imagem_03.jpg',
-  ];
-
-  int _paginaAtual = 0;
+  final CarrosselController _carrosselController = CarrosselController();
+  final OpcoesController _opcoesController = OpcoesController();
 
   @override
   void initState() {
     super.initState();
-
-    Timer.periodic(const Duration(seconds: 3), (Timer timer) {
-      setState(() {
-        _paginaAtual = (_paginaAtual + 1) % _imagensCarrossel.length;
-      });
-
-      _carrosselController.animateToPage(
-        _paginaAtual,
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.easeInOut,
-      );
+    _carrosselController.iniciarCarrossel(() {
+      if (mounted) setState(() {});
     });
   }
 
@@ -64,27 +49,34 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
         ),
         actions: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Switch(
                 value: temaController.temaEscuro,
-                onChanged: (value) {
-                  temaController.alternarTema();
-                },
+                onChanged: (_) => temaController.alternarTema(),
               ),
-              const SizedBox(width: 12), // espaçamento extra
+              const SizedBox(width: 12),
             ],
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            _buildCampoDePesquisa(),
-            const SizedBox(height: 16),
-            _buildCarrosselDeImagens(),
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildCampoDePesquisa(),
+              const SizedBox(height: 16),
+              _buildCarrosselDeImagens(),
+              const SizedBox(height: 16),
+              const Text(
+                'Selecione a sua opção para explorar:',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              _buildOpcoesHorizontais(),
+            ],
+          ),
         ),
       ),
     );
@@ -119,10 +111,10 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
     return SizedBox(
       height: 180,
       child: PageView.builder(
-        controller: _carrosselController,
-        itemCount: _imagensCarrossel.length,
+        controller: _carrosselController.pageController,
+        itemCount: _carrosselController.imagens.length,
         itemBuilder: (context, index) {
-          return _buildItemCarrossel(_imagensCarrossel[index]);
+          return _buildItemCarrossel(_carrosselController.imagens[index]);
         },
       ),
     );
@@ -137,6 +129,43 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
         caminhoImagem,
         fit: BoxFit.cover,
         width: double.infinity,
+      ),
+    );
+  }
+
+  Widget _buildOpcoesHorizontais() {
+    return SizedBox(
+      height: 50, // Altura fixa do bloco das opções
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: List.generate(_opcoesController.opcoes.length, (index) {
+            final opcao = _opcoesController.opcoes[index];
+            return Container(
+              width: 120, // Largura fixa de cada item
+              margin: const EdgeInsets.only(right: 10),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 255, 197, 216),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.pink),
+              ),
+              child: Center(
+                child: Text(
+                  opcao,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Colors.pink
+                            : Colors.black,
+                  ),
+                ),
+              ),
+            );
+          }),
+        ),
       ),
     );
   }
