@@ -21,7 +21,39 @@ class OpcoesController extends ChangeNotifier {
         'descricao':
             'Av. Dom Almeida Lustosa, 2000 - Parangaba, Fortaleza - CE, 60740-000',
       },
-      {'titulo': 'Outlet', 'descricao': 'Loja com descontos especiais.'},
+      {
+        'titulo': 'Shopping Benfica',
+        'descricao':
+            'R. Carapinima, 2200 - Benfica, Fortaleza - CE, 60015-290',
+      },
+      {
+        'titulo': 'Shopping Del Passeo',
+        'descricao':
+            'Av. Santos Dumont, 3131 - Aldeota, Fortaleza - CE, 60150-165',
+      },
+      {
+        'titulo': 'Shopping Rio Mar Fortaleza',
+        'descricao':
+            'R. Des. Lauro Nogueira, 1500 - Papicu, Fortaleza - CE, 60175-055',
+      },
+      {
+        'titulo': 'Shopping Rio Mar Kennedy',
+        'descricao':
+            'Av. Srg. Hermínio Sampaio, 3100 - Pres. Kennedy, Fortaleza - CE, 60355-512',
+      },
+      {
+        'titulo': 'Shopping Jóquei',
+        'descricao': 'Av. Lineu Machado, 419 - Jóquei Clube, Fortaleza - CE, 60520-102',
+      },
+       {
+        'titulo': 'Shopping Via Sul',
+        'descricao': 'Av. Washington Soares, 4335 - Lagoa Sapiranga (Coité), Fortaleza - CE, 60833-005',
+      },
+      {
+        'titulo': 'North Shopping Fortaleza',
+        'descricao': 'Av. Bezerra de Menezes, 2450 - Pres. Kennedy, Fortaleza - CE, 60325-002',
+      },
+      
     ],
     'Universidades': [
       {

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lynna/controller/tema_controller.dart';
 import 'package:lynna/controller/opcoes_controller.dart';
-import 'package:lynna/tela_principal.dart';
+import 'package:lynna/splash_screen.dart';
+import 'package:lynna/tela_prinicipal/tela_principal.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -28,18 +29,14 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData.light().copyWith(
         scaffoldBackgroundColor: Colors.white,
-        colorScheme: const ColorScheme.light(
-          primary: Colors.pink, // 👈 Cor principal no modo claro
-        ),
+        colorScheme: const ColorScheme.light(primary: Colors.pink),
       ),
       darkTheme: ThemeData.dark().copyWith(
         scaffoldBackgroundColor: Colors.black,
-        colorScheme: const ColorScheme.dark(
-          primary: Colors.pink, // 👈 Cor principal no modo escuro
-        ),
+        colorScheme: const ColorScheme.dark(primary: Colors.pink),
       ),
       themeMode: temaController.modoAtual,
-      home: const TelaPrincipalScreen(),
+      home: const SplashScreen(), // 👈 tela de carregamento
     );
   }
 }
