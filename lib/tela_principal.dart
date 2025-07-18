@@ -19,6 +19,9 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
   final CarrosselController _carrosselController = CarrosselController();
   int _indiceSelecionado = 0;
 
+  // Armazena títulos favoritos
+  final Set<String> _favoritos = {};
+
   @override
   void initState() {
     super.initState();
@@ -34,10 +37,9 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
     super.dispose();
   }
 
-  // Lista das páginas para o menu inferior, recebe o controller para passar adiante
   List<Widget> _paginas(OpcoesController opcoesController) => [
         _buildConteudoPrincipal(opcoesController),
-        const Center(child: Text('Tela 2 - Futuro conteúdo')),
+        _buildTelaFavoritos(),
         const Center(child: Text('Tela 3 - Futuro conteúdo')),
       ];
 
@@ -86,8 +88,8 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
             label: 'Início',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: 'Opções',
+            icon: Icon(Icons.favorite),
+            label: 'Favoritos',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
@@ -122,6 +124,40 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildTelaFavoritos() {
+    if (_favoritos.isEmpty) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Text(
+            'Você ainda não adicionou favoritos.',
+            style: TextStyle(fontSize: 16),
+          ),
+        ),
+      );
+    }
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: _favoritos.map((titulo) {
+        return Card(
+          margin: const EdgeInsets.symmetric(vertical: 8),
+          child: ListTile(
+            leading: const Icon(Icons.person, color: Colors.pink),
+            title: Text(titulo, style: const TextStyle(fontWeight: FontWeight.w600)),
+            trailing: IconButton(
+              icon: const Icon(Icons.favorite, color: Colors.pink),
+              onPressed: () {
+                setState(() {
+                  _favoritos.remove(titulo);
+                });
+              },
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 
@@ -245,6 +281,10 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
 
     return Column(
       children: subopcoes.map((sub) {
+        final titulo = sub['titulo'] ?? '';
+        final descricao = sub['descricao'] ?? '';
+        final favorito = _favoritos.contains(titulo);
+
         return Container(
           margin: const EdgeInsets.symmetric(vertical: 8),
           child: Row(
@@ -260,16 +300,31 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      sub['titulo'] ?? '',
+                      titulo,
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.w600),
                     ),
                     Text(
-                      sub['descricao'] ?? '',
+                      descricao,
                       style: const TextStyle(fontSize: 14),
                     ),
                   ],
                 ),
+              ),
+              IconButton(
+                icon: Icon(
+                  favorito ? Icons.favorite : Icons.favorite_border,
+                  color: Colors.pink,
+                ),
+                onPressed: () {
+                  setState(() {
+                    if (favorito) {
+                      _favoritos.remove(titulo);
+                    } else {
+                      _favoritos.add(titulo);
+                    }
+                  });
+                },
               ),
             ],
           ),
