@@ -21,17 +21,12 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.explore, size: 80, color: Colors.pink),
-            SizedBox(height: 20),
-            Text(
-              'Lynna',
-              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-            ),
+            Image.asset('assets/logo/logo_lynna.png', width: 250, height: 250),
             SizedBox(height: 10),
             CircularProgressIndicator(color: Colors.pink),
           ],
