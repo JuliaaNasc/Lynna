@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lynna/controller/tema_controller.dart';
 import 'package:lynna/controller/opcoes_controller.dart';
-import 'package:lynna/tela_carregamento/carregamento.dart';
+import 'package:lynna/tela_carregamento/tela_carregamento.dart';
 import 'package:lynna/tela_prinicipal/tela_principal.dart';
 import 'package:provider/provider.dart';
 

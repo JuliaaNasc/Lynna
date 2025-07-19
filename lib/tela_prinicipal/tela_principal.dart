@@ -232,7 +232,8 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
                   opcoesController.selecionarOpcao(opcao);
                 });
               },
-              child: Container(
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 500),
                 width: 120,
                 margin: const EdgeInsets.only(right: 10),
                 padding: const EdgeInsets.all(12),
