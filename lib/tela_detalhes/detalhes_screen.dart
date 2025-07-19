@@ -14,7 +14,7 @@ class DetalheScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(titulo),
+        title: Text('A Lynna está $titulo'),
         backgroundColor: Colors.pink,
       ),
       body: Padding(

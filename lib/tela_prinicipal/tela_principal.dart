@@ -34,10 +34,10 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
   }
 
   List<Widget> _paginas(OpcoesController opcoesController) => [
-        _buildConteudoPrincipal(opcoesController),
-        _buildTelaFavoritos(),
-        const Center(child: Text('Tela 3 - Futuro conteúdo')),
-      ];
+    _buildConteudoPrincipal(opcoesController),
+    _buildTelaFavoritos(),
+    const Center(child: Text('Tela 3 - Futuro conteúdo')),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -84,8 +84,14 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
         },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Início'),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Favoritos'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Configurações'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite),
+            label: 'Favoritos',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Configurações',
+          ),
         ],
       ),
     );
@@ -132,28 +138,29 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
     }
     return ListView(
       padding: const EdgeInsets.all(16),
-      children: _favoritos
-          .map(
-            (titulo) => Card(
-              margin: const EdgeInsets.symmetric(vertical: 8),
-              child: ListTile(
-                leading: const Icon(Icons.person, color: Colors.pink),
-                title: Text(
-                  titulo,
-                  style: const TextStyle(fontWeight: FontWeight.w600),
+      children:
+          _favoritos
+              .map(
+                (titulo) => Card(
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  child: ListTile(
+                    leading: const Icon(Icons.person, color: Colors.pink),
+                    title: Text(
+                      titulo,
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.favorite, color: Colors.pink),
+                      onPressed: () {
+                        setState(() {
+                          _favoritos.remove(titulo);
+                        });
+                      },
+                    ),
+                  ),
                 ),
-                trailing: IconButton(
-                  icon: const Icon(Icons.favorite, color: Colors.pink),
-                  onPressed: () {
-                    setState(() {
-                      _favoritos.remove(titulo);
-                    });
-                  },
-                ),
-              ),
-            ),
-          )
-          .toList(),
+              )
+              .toList(),
     );
   }
 
@@ -230,9 +237,10 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
                 margin: const EdgeInsets.only(right: 10),
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: selecionado
-                      ? Colors.pinkAccent
-                      : const Color.fromARGB(255, 255, 197, 216),
+                  color:
+                      selecionado
+                          ? Colors.pinkAccent
+                          : const Color.fromARGB(255, 255, 197, 216),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: Colors.pink),
                 ),
@@ -242,9 +250,10 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: selecionado
-                          ? Colors.white
-                          : Theme.of(context).brightness == Brightness.dark
+                      color:
+                          selecionado
+                              ? Colors.white
+                              : Theme.of(context).brightness == Brightness.dark
                               ? Colors.pink
                               : Colors.black,
                     ),
@@ -265,9 +274,10 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
       style: TextStyle(
         fontWeight: FontWeight.w600,
         fontSize: 14,
-        color: Theme.of(context).brightness == Brightness.dark
-            ? Colors.white
-            : Colors.black,
+        color:
+            Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black,
       ),
     );
   }
@@ -277,68 +287,79 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
     final subopcoes = opcoesController.subopcoesSelecionadas;
 
     return Column(
-      children: subopcoes.map((sub) {
-        final titulo = sub['titulo'] ?? '';
-        final descricao = sub['descricao'] ?? '';
-        final favorito = _favoritos.contains(titulo);
+      children:
+          subopcoes.map((sub) {
+            final titulo = sub['titulo'] ?? '';
+            final descricao = sub['descricao'] ?? '';
+            final favorito = _favoritos.contains(titulo);
 
-        return GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => DetalheScreen(titulo: titulo, descricao: descricao),
+            return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (_) => DetalheScreen(
+                          titulo: 'A Lynna está $titulo',
+                          descricao: descricao,
+                        ),
+                  ),
+                );
+              },
+              child: Container(
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.pink.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.pink),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.home_rounded,
+                      size: 40,
+                      color: Colors.pink,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            titulo,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(descricao, style: const TextStyle(fontSize: 14)),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        favorito ? Icons.favorite : Icons.favorite_border,
+                        color: Colors.pink,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          if (favorito) {
+                            _favoritos.remove(titulo);
+                          } else {
+                            _favoritos.add(titulo);
+                          }
+                        });
+                      },
+                    ),
+                  ],
+                ),
               ),
             );
-          },
-          child: Container(
-            margin: const EdgeInsets.symmetric(vertical: 8),
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-            decoration: BoxDecoration(
-              color: Colors.pink.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.pink),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.home_rounded, size: 40, color: Colors.pink),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        titulo,
-                        style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w600),
-                      ),
-                      Text(
-                        descricao,
-                        style: const TextStyle(fontSize: 14),
-                      ),
-                    ],
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(
-                    favorito ? Icons.favorite : Icons.favorite_border,
-                    color: Colors.pink,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      if (favorito) {
-                        _favoritos.remove(titulo);
-                      } else {
-                        _favoritos.add(titulo);
-                      }
-                    });
-                  },
-                ),
-              ],
-            ),
-          ),
-        );
-      }).toList(),
+          }).toList(),
     );
   }
 }
@@ -360,10 +381,7 @@ class DetalheScreen extends StatelessWidget {
       appBar: AppBar(title: Text(titulo)),
       body: Padding(
         padding: const EdgeInsets.all(16),
-        child: Text(
-          descricao,
-          style: const TextStyle(fontSize: 18),
-        ),
+        child: Text(descricao, style: const TextStyle(fontSize: 18)),
       ),
     );
   }
