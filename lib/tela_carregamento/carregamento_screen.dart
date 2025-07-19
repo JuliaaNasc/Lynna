@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:lynna/tela_prinicipal/tela_principal.dart';
+import 'package:lynna/tela_prinicipal/principal_screen.dart';
 
-class TelaCarregamento extends StatefulWidget {
-  const TelaCarregamento({super.key});
+class CarregamentoScreen extends StatefulWidget {
+  const CarregamentoScreen({super.key});
 
   @override
-  State<TelaCarregamento> createState() => _TelaCarregamentoState();
+  State<CarregamentoScreen> createState() => _CarregamentoScreenState();
 }
 
-class _TelaCarregamentoState extends State<TelaCarregamento> {
+class _CarregamentoScreenState extends State<CarregamentoScreen> {
   double _opacity = 0;
   double _scale = 0.8;
 
@@ -27,7 +27,7 @@ class _TelaCarregamentoState extends State<TelaCarregamento> {
     // Vai para a tela principal após 2 segundos
     Future.delayed(const Duration(seconds: 2), () {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const TelaPrincipalScreen()),
+        MaterialPageRoute(builder: (_) => const PrincipalScreen()),
       );
     });
   }

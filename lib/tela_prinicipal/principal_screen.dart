@@ -4,14 +4,15 @@ import 'package:lynna/controller/carrossel_controller.dart';
 import 'package:lynna/controller/opcoes_controller.dart';
 import 'package:provider/provider.dart';
 
-class TelaPrincipalScreen extends StatefulWidget {
-  const TelaPrincipalScreen({super.key});
+
+class PrincipalScreen extends StatefulWidget {
+  const PrincipalScreen({super.key});
 
   @override
-  State<TelaPrincipalScreen> createState() => _TelaPrincipalScreenState();
+  State<PrincipalScreen> createState() => _PrincipalScreenState();
 }
 
-class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
+class _PrincipalScreenState extends State<PrincipalScreen> {
   int _paginaSelecionada = 0;
   final TextEditingController _pesquisaController = TextEditingController();
   final CarrosselController _carrosselController = CarrosselController();
