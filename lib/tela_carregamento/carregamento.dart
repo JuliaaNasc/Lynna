@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:lynna/tela_prinicipal/tela_principal.dart';
 
-class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+class TelaCarregamento extends StatefulWidget {
+  const TelaCarregamento({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  State<TelaCarregamento> createState() => _TelaCarregamentoState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _TelaCarregamentoState extends State<TelaCarregamento> {
   double _opacity = 0;
   double _scale = 0.8;
 

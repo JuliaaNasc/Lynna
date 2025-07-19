@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lynna/controller/tema_controller.dart';
 import 'package:lynna/controller/opcoes_controller.dart';
-import 'package:lynna/tela_carregamento/splash_screen.dart';
+import 'package:lynna/tela_carregamento/carregamento.dart';
 import 'package:lynna/tela_prinicipal/tela_principal.dart';
 import 'package:provider/provider.dart';
 
@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
         colorScheme: const ColorScheme.dark(primary: Colors.pink),
       ),
       themeMode: temaController.modoAtual,
-      home: const SplashScreen(), // 👈 tela de carregamento
+      home: const TelaCarregamento(), // 👈 tela de carregamento
     );
   }
 }
