@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class OpcoesController extends ChangeNotifier {
   final List<String> opcoes = [
+    'Todos',
     'Shoppings',
     'Universidades',
     'Aeroportos',
@@ -10,6 +11,7 @@ class OpcoesController extends ChangeNotifier {
   ];
 
   final Map<String, List<Map<String, String>>> _subopcoes = {
+    'Todos': [{}],
     'Shoppings': [
       {
         'titulo': 'Shopping Iguatemi',
@@ -23,8 +25,7 @@ class OpcoesController extends ChangeNotifier {
       },
       {
         'titulo': 'Shopping Benfica',
-        'descricao':
-            'R. Carapinima, 2200 - Benfica, Fortaleza - CE, 60015-290',
+        'descricao': 'R. Carapinima, 2200 - Benfica, Fortaleza - CE, 60015-290',
       },
       {
         'titulo': 'Shopping Del Passeo',
@@ -43,17 +44,19 @@ class OpcoesController extends ChangeNotifier {
       },
       {
         'titulo': 'Shopping Jóquei',
-        'descricao': 'Av. Lineu Machado, 419 - Jóquei Clube, Fortaleza - CE, 60520-102',
+        'descricao':
+            'Av. Lineu Machado, 419 - Jóquei Clube, Fortaleza - CE, 60520-102',
       },
-       {
+      {
         'titulo': 'Shopping Via Sul',
-        'descricao': 'Av. Washington Soares, 4335 - Lagoa Sapiranga (Coité), Fortaleza - CE, 60833-005',
+        'descricao':
+            'Av. Washington Soares, 4335 - Lagoa Sapiranga (Coité), Fortaleza - CE, 60833-005',
       },
       {
         'titulo': 'North Shopping Fortaleza',
-        'descricao': 'Av. Bezerra de Menezes, 2450 - Pres. Kennedy, Fortaleza - CE, 60325-002',
+        'descricao':
+            'Av. Bezerra de Menezes, 2450 - Pres. Kennedy, Fortaleza - CE, 60325-002',
       },
-      
     ],
     'Universidades': [
       {
@@ -100,10 +103,26 @@ class OpcoesController extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<Map<String, String>> get subopcoesSelecionadas =>
-      _subopcoes[_opcaoSelecionada] ?? [];
+  // Retorna todas as subopções de todas as categorias exceto 'Todos'
+  List<Map<String, String>> get todasSubopcoes {
+    List<Map<String, String>> todas = [];
+    _subopcoes.forEach((key, value) {
+      if (key != 'Todos') {
+        todas.addAll(value);
+      }
+    });
+    return todas;
+  }
 
-  // Método para pegar o título e descrição da primeira subopção
+  // Retorna as subopções da categoria selecionada, ou todas se for "Todos"
+  List<Map<String, String>> get subopcoesSelecionadas {
+    if (_opcaoSelecionada == 'Todos') {
+      return todasSubopcoes;
+    }
+    return _subopcoes[_opcaoSelecionada] ?? [];
+  }
+
+  // Pega a primeira subopção para mostrar um resumo ou info inicial
   Map<String, String> get primeiraSubopcao {
     final lista = subopcoesSelecionadas;
     if (lista.isNotEmpty) {

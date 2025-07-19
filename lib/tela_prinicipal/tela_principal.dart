@@ -12,14 +12,10 @@ class TelaPrincipalScreen extends StatefulWidget {
 }
 
 class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
-  // Controle do menu rodapé
   int _paginaSelecionada = 0;
-
   final TextEditingController _pesquisaController = TextEditingController();
   final CarrosselController _carrosselController = CarrosselController();
   int _indiceSelecionado = 0;
-
-  // Armazena títulos favoritos
   final Set<String> _favoritos = {};
 
   @override
@@ -50,11 +46,15 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.location_on),
-            SizedBox(width: 8),
-            Text(
+            Image.asset(
+              'assets/logo/logo_icone_lynna.png',
+              width: 40,
+              height: 40,
+            ),
+            const SizedBox(width: 8),
+            const Text(
               'Bem-Vindo à Lynna',
               style: TextStyle(color: Colors.pink, fontWeight: FontWeight.bold),
             ),
@@ -83,18 +83,9 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
           });
         },
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Início',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Favoritos',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Configurações',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Início'),
+          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Favoritos'),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Configurações'),
         ],
       ),
     );
@@ -141,23 +132,28 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
     }
     return ListView(
       padding: const EdgeInsets.all(16),
-      children: _favoritos.map((titulo) {
-        return Card(
-          margin: const EdgeInsets.symmetric(vertical: 8),
-          child: ListTile(
-            leading: const Icon(Icons.person, color: Colors.pink),
-            title: Text(titulo, style: const TextStyle(fontWeight: FontWeight.w600)),
-            trailing: IconButton(
-              icon: const Icon(Icons.favorite, color: Colors.pink),
-              onPressed: () {
-                setState(() {
-                  _favoritos.remove(titulo);
-                });
-              },
+      children: _favoritos
+          .map(
+            (titulo) => Card(
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              child: ListTile(
+                leading: const Icon(Icons.person, color: Colors.pink),
+                title: Text(
+                  titulo,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+                trailing: IconButton(
+                  icon: const Icon(Icons.favorite, color: Colors.pink),
+                  onPressed: () {
+                    setState(() {
+                      _favoritos.remove(titulo);
+                    });
+                  },
+                ),
+              ),
             ),
-          ),
-        );
-      }).toList(),
+          )
+          .toList(),
     );
   }
 
@@ -276,6 +272,7 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
     );
   }
 
+  // Componente clicável para as opções detalhadas
   Widget _buildConteudoSelecionado(OpcoesController opcoesController) {
     final subopcoes = opcoesController.subopcoesSelecionadas;
 
@@ -285,51 +282,89 @@ class _TelaPrincipalScreenState extends State<TelaPrincipalScreen> {
         final descricao = sub['descricao'] ?? '';
         final favorito = _favoritos.contains(titulo);
 
-        return Container(
-          margin: const EdgeInsets.symmetric(vertical: 8),
-          child: Row(
-            children: [
-              const Icon(
-                Icons.home_rounded,
-                size: 40,
-                color: Colors.pink,
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => DetalheScreen(titulo: titulo, descricao: descricao),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      titulo,
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.w600),
-                    ),
-                    Text(
-                      descricao,
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                  ],
+            );
+          },
+          child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.pink.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.pink),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.home_rounded, size: 40, color: Colors.pink),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        titulo,
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w600),
+                      ),
+                      Text(
+                        descricao,
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              IconButton(
-                icon: Icon(
-                  favorito ? Icons.favorite : Icons.favorite_border,
-                  color: Colors.pink,
+                IconButton(
+                  icon: Icon(
+                    favorito ? Icons.favorite : Icons.favorite_border,
+                    color: Colors.pink,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      if (favorito) {
+                        _favoritos.remove(titulo);
+                      } else {
+                        _favoritos.add(titulo);
+                      }
+                    });
+                  },
                 ),
-                onPressed: () {
-                  setState(() {
-                    if (favorito) {
-                      _favoritos.remove(titulo);
-                    } else {
-                      _favoritos.add(titulo);
-                    }
-                  });
-                },
-              ),
-            ],
+              ],
+            ),
           ),
         );
       }).toList(),
+    );
+  }
+}
+
+// Nova tela para mostrar detalhes ao clicar numa opção
+class DetalheScreen extends StatelessWidget {
+  final String titulo;
+  final String descricao;
+
+  const DetalheScreen({
+    super.key,
+    required this.titulo,
+    required this.descricao,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(titulo)),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Text(
+          descricao,
+          style: const TextStyle(fontSize: 18),
+        ),
+      ),
     );
   }
 }
